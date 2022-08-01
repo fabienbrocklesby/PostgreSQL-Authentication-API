@@ -1,13 +1,12 @@
-import * as postController from './modules/posts/post.controller.js';
+import * as userController from './modules/user/user.controller.js';
 import * as errorController from './helpers/error.controller.js';
 
 export default (route) => {
-  // Post Operations
-  route.get('/', postController.index);
-  route.post('/', postController.createPost);
-  route.get('/:id', postController.findById);
-  route.post('/:id', postController.updatePost);
-  route.delete('/:id', postController.deletePost);
+  // User routes
+  route.get('/api/users', userController.getUsers);
+  route.get('/api/users/getuser', userController.getUser);
+  route.post('/api/users/', userController.createUser);
+  route.post('/api/users/verify', userController.verifyUser);
 
   // Error Routes
   route.use(errorController.notFound);

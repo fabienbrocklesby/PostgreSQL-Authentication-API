@@ -12,17 +12,16 @@ export default (() => {
 
   pool.connect((err) => {
     if (err) {
-      return console.error('Error:', err.stack)
+      return console.error('Error:', err.stack);
     };
     console.log('Database Connected 📶');
   });
 
-
   return {
     query: (text, params) => {
       if (process.env.NODE_ENV === 'development') { console.log(text); }
-        return pool.query(text, params);
-      },
-      ...pool,
+      return pool.query(text, params);
+    },
+    ...pool,
   };
 })();
