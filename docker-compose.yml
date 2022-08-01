@@ -1,0 +1,36 @@
+version: '3.6'
+
+services: 
+    db:
+        image: postgres
+        restart: always
+        env_file:
+          - .env
+        environment: 
+            POSTGRES_ROOT_PASSWORD: ${POSTGRES_ROOT_PASSWORD}
+            POSTGRES_DB: authentication
+            POSTGRES_USER: fabien
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+        ports:
+          - 5432:5432
+        volumes: 
+            - ./init:/docker-entrypoint-initdb.d
+
+    app:
+        container_name: app
+        build:
+          context: .
+          dockerfile: Dockerfile
+        ports:
+          - 3000:3000
+        volumes:
+          - .:/app
+          - "/app/node_modules"
+        depends_on:
+          - db
+
+    adminer:
+        image: adminer
+        restart: always
+        ports: 
+            - 8080:8080
