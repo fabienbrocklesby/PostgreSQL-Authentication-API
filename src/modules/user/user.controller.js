@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcrypt';
 import * as userService from './user.service.js';
 import * as emailController from '../../helpers/email.controller.js';
 
@@ -21,7 +22,7 @@ export const createUser = async (request, response) => {
   const user = await userService.createUser(request.body, verifyCode);
   if (user) {
     const message = `Welcome to the community ${user.username}! Please verify your email address by using this code: ${verifyCode}`;
-    emailController.sendEmail('hello@fabienbrocklesby.com', 'Verify User', message);
+    emailController.sendEmail(user.email, 'Verify User', message);
     response.json({ data: user });
   };
 };
@@ -34,4 +35,17 @@ export const verifyUser = async (request, response) => {
   } else {
     response.status(400).json({ error: 'Verification code is incorrect' });
   }
+};
+
+export const deleteUser = async (request, response) => {
+  const user = await userService.getUser(request.body.email);
+  if (!user) return response.status(400).json({ error: 'User does not exist' });
+  await bcrypt.compare(request.body.password, user.password, (error, res) => {
+    if (error || !res) {
+      return response.status(400).json({ error: 'Password is incorrect' });
+    };
+    userService.deleteUser(user.id);
+    response.json({ data: user });
+    ;
+  });
 };

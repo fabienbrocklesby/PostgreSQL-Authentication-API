@@ -22,3 +22,8 @@ export const createUser = async ({ username, email, password }, verifyCode) => {
 export const verifyUser = async (id) => {
   await userModel.verifyUser(id);
 };
+
+export const deleteUser = async (id, password, bodyPassword) => {
+  console.log(id, password, bodyPassword);
+  return userModel.deleteUser(id);
+};

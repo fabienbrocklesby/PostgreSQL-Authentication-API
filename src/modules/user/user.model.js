@@ -18,3 +18,8 @@ export const createUser = async ({ username, email, password, verifyCode }) => {
 export const verifyUser = async (id) => {
   await db.query('UPDATE users SET verified = true, verifycode = null WHERE id = $1', [id]);
 };
+
+export const deleteUser = async (id) => {
+  const user = await db.query('DELETE FROM users WHERE id = $1', [id]);
+  return user;
+};

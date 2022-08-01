@@ -7,6 +7,7 @@ export default (route) => {
   route.get('/api/users/getuser', userController.getUser);
   route.post('/api/users/', userController.createUser);
   route.post('/api/users/verify', userController.verifyUser);
+  route.post('/api/users/delete', userController.deleteUser);
 
   // Error Routes
   route.use(errorController.notFound);
