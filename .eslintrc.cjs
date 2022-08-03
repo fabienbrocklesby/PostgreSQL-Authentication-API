@@ -19,5 +19,6 @@ module.exports = {
     'object-curly-newline': 'off',
     quotes: 'off',
     'import/prefer-default-export': 'off',
+    'import/no-named-as-default-member': 'off',
   },
 };

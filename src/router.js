@@ -1,6 +1,8 @@
 import * as userController from './modules/user/user.controller.js';
 import * as authController from './modules/auth/auth.controller.js';
 import * as errorController from './helpers/error.controller.js';
+import authMiddleware from './middleware/auth.middleware.js';
+import postController from './modules/posts/post.controller.js';
 
 export default (route) => {
   // User Routes
@@ -13,6 +15,9 @@ export default (route) => {
 
   // Auth Routes
   route.post('/api/auth/login', authController.login);
+
+  // Post Routes
+  route.get('/api/posts/', authMiddleware, postController);
 
   // Error Routes
   route.use(errorController.notFound);
