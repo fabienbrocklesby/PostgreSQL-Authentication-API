@@ -8,6 +8,7 @@ export default (route) => {
   route.post('/api/users/create', userController.register);
   route.post('/api/users/verify', userController.verify);
   route.post('/api/users/shutdown', userController.shutdown);
+  route.post('/api/users/updatepassword', userController.updatePassword);
 
   // Error Routes
   route.use(errorController.notFound);

@@ -32,6 +32,14 @@ export const verify = async (request, response, next) => {
   };
 };
 
+export const updatePassword = async (request, response, next) => {
+  try {
+    response.json({ data: await userService.updatePassword(request.body) });
+  } catch (error) {
+    next(error);
+  };
+};
+
 export const shutdown = async (request, response, next) => {
   try {
     response.json({ data: await userService.shutdown(request.body) });
