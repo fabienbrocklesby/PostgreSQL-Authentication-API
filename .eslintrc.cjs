@@ -18,5 +18,6 @@ module.exports = {
     'no-param-reassign': 'off',
     'object-curly-newline': 'off',
     quotes: 'off',
+    'import/prefer-default-export': 'off',
   },
 };
