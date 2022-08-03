@@ -1,29 +1,80 @@
+import ShortUniqueId from 'short-unique-id';
 import bcrypt from 'bcrypt';
 import * as userModel from './user.model.js';
+import * as emailController from '../../helpers/email.controller.js';
 
-const salt = await bcrypt.genSalt(10);
+const uid = new ShortUniqueId({ length: 10 });
 
-export const getUsers = async () => {
-  const users = await userModel.getUsers();
-  return users;
-};
+export const getUsers = async () => (
+  userModel.getUsers());
 
-export const getUser = async (email) => {
-  const user = await userModel.getUser(email);
+export const findByEmail = async (email) => (
+  userModel.findByEmail(email));
+
+export const register = async ({ username, email, password }) => {
+  if (await userModel.findByEmail(email)) {
+    throw Object({
+      name: 'badRequest',
+      message: 'User email already exists',
+    });
+  }
+
+  const verifyCode = uid();
+
+  const user = await userModel.create({
+    username,
+    email,
+    password: await bcrypt.hash(password, 10),
+    verifyCode,
+  });
+
+  await emailController.sendEmail(
+    user.email,
+    'Verify',
+    `Your Verification Code: ${verifyCode}`,
+  );
+
   return user;
 };
 
-export const createUser = async ({ username, email, password }, verifyCode) => {
-  password = await bcrypt.hash(password, salt);
-  const user = await userModel.createUser({ username, email, password, verifyCode });
+export const verify = async ({ email, verifyCode }) => {
+  const user = await userModel.verify({
+    email,
+    verifyCode,
+  });
+
+  if (!user) {
+    throw Object({
+      name: 'badRequest',
+      message: 'Invalid verification code',
+    });
+  };
+
   return user;
 };
 
-export const verifyUser = async (id) => {
-  await userModel.verifyUser(id);
-};
+export const shutdown = async ({ email, password }) => {
+  const userData = await userModel.findByEmail(email);
 
-export const deleteUser = async (id, password, bodyPassword) => {
-  console.log(id, password, bodyPassword);
-  return userModel.deleteUser(id);
+  const passwordCompare = await bcrypt.compare(password, userData.password);
+
+  if (!passwordCompare) {
+    throw Object({
+      name: 'badRequest',
+      message: 'Incorrect password',
+    });
+  };
+
+  const user = await userModel.shutdown({
+    email,
+  });
+
+  if (!user) {
+    throw Object({
+      name: 'badRequest',
+      message: 'Invalid email or password',
+    });
+  }
+
+  return user;
 };

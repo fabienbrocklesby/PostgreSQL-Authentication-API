@@ -1,51 +1,41 @@
-import { v4 as uuidv4 } from 'uuid';
-import bcrypt from 'bcrypt';
 import * as userService from './user.service.js';
-import * as emailController from '../../helpers/email.controller.js';
 
-export const getUsers = async (request, response) => {
-  const users = await userService.getUsers();
-  response.json({ data: users });
-};
-
-export const getUser = async (request, response) => {
-  const user = await userService.getUser(request.body.email);
-  response.json({ data: user });
-};
-
-export const createUser = async (request, response) => {
-  const userExists = await userService.getUser(request.body.email);
-  if (userExists) {
-    return response.status(400).json({ error: 'User already exists' });
-  };
-  const verifyCode = uuidv4();
-  const user = await userService.createUser(request.body, verifyCode);
-  if (user) {
-    const message = `Welcome to the community ${user.username}! Please verify your email address by using this code: ${verifyCode}`;
-    emailController.sendEmail(user.email, 'Verify User', message);
-    response.json({ data: user });
-  };
-};
-
-export const verifyUser = async (request, response) => {
-  const user = await userService.getUser(request.body.email);
-  if (user.verifycode === request.body.verifyCode) {
-    await userService.verifyUser(user.id);
-    response.json({ data: user });
-  } else {
-    response.status(400).json({ error: 'Verification code is incorrect' });
+export const getUsers = async (request, response, next) => {
+  try {
+    response.json({ data: await userService.getUsers() });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const deleteUser = async (request, response) => {
-  const user = await userService.getUser(request.body.email);
-  if (!user) return response.status(400).json({ error: 'User does not exist' });
-  await bcrypt.compare(request.body.password, user.password, (error, res) => {
-    if (error || !res) {
-      return response.status(400).json({ error: 'Password is incorrect' });
-    };
-    userService.deleteUser(user.id);
-    response.json({ data: user });
-    ;
-  });
+export const findByEmail = async (request, response, next) => {
+  try {
+    response.json({ data: await userService.findByEmail(request.body.email) });
+  } catch (error) {
+    next(error);
+  };
+};
+
+export const register = async (request, response, next) => {
+  try {
+    response.json({ data: await userService.register(request.body) });
+  } catch (error) {
+    next(error);
+  };
+};
+
+export const verify = async (request, response, next) => {
+  try {
+    response.json({ data: await userService.verify(request.body) });
+  } catch (error) {
+    next(error);
+  };
+};
+
+export const shutdown = async (request, response, next) => {
+  try {
+    response.json({ data: await userService.shutdown(request.body) });
+  } catch (error) {
+    next(error);
+  }
 };

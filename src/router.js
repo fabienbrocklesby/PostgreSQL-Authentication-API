@@ -4,10 +4,10 @@ import * as errorController from './helpers/error.controller.js';
 export default (route) => {
   // User routes
   route.get('/api/users', userController.getUsers);
-  route.get('/api/users/getuser', userController.getUser);
-  route.post('/api/users/', userController.createUser);
-  route.post('/api/users/verify', userController.verifyUser);
-  route.post('/api/users/delete', userController.deleteUser);
+  route.get('/api/users/getuser', userController.findByEmail);
+  route.post('/api/users/create', userController.register);
+  route.post('/api/users/verify', userController.verify);
+  route.post('/api/users/shutdown', userController.shutdown);
 
   // Error Routes
   route.use(errorController.notFound);

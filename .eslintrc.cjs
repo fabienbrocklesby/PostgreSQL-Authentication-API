@@ -17,5 +17,6 @@ module.exports = {
     'consistent-return': 'off',
     'no-param-reassign': 'off',
     'object-curly-newline': 'off',
+    quotes: 'off',
   },
 };
