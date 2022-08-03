@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 import routes from './router.js';
 
@@ -12,6 +13,7 @@ app.disable('x-powered-by');
 app.use(cors({ exposedHeaders: ['x-session-id'] }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 routes(app);
 

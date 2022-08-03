@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import * as authModel from './auth.model.js';
 import userValidator from '../../validators/user.validator.js';
 
@@ -28,5 +29,7 @@ export const login = async ({ email, password }) => {
     });
   }
 
-  return user;
+  const token = jwt.sign({ username: user.username, email: user.email }, process.env.SECRET_KEY);
+
+  return token;
 };
